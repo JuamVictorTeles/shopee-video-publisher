@@ -10,14 +10,48 @@ body{font-family:-apple-system,Segoe UI,Roboto,sans-serif;background:#f6f6f6}
 header{background:#ee4d2d;color:#fff;padding:1rem 2rem}
 header a{color:#fff;text-decoration:none;margin-right:1rem;font-size:.9rem}
 main{max-width:960px;margin:2rem auto;padding:0 1rem}
+.flash{padding:.8rem;border-radius:8px;margin-bottom:1rem}
+.flash.success{background:#e6f4ea;color:#137333}.flash.error{background:#fdecea;color:#b3261e}
 .empty{background:#fff;border-radius:12px;padding:3rem;text-align:center;color:#888;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem}
+.vcard{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.vcard video{width:100%;max-height:320px;background:#000}
+.vbody{padding:1rem}
+.vbody h4{font-size:1rem;margin-bottom:.3rem}
+.vbody p{font-size:.85rem;color:#666;margin-bottom:.5rem}
+.badge{display:inline-block;padding:.2rem .6rem;border-radius:20px;font-size:.75rem}
+.ok{background:#e6f4ea;color:#137333}.warn{background:#fef7e0;color:#b06000}.err{background:#fdecea;color:#b3261e}
+.items{font-size:.8rem;color:#888;margin:.4rem 0}
+.del{background:none;border:none;color:#b3261e;cursor:pointer;font-size:.85rem;padding:0}
+.meta{font-size:.78rem;color:#aaa;margin-top:.4rem}
 </style>
 </head>
 <body>
 <header><a href="/dashboard">← Painel</a><span>🎬 Meus vídeos</span></header>
 <main>
+{% with msgs=get_flashed_messages(with_categories=true) %}{% for c,m in msgs %}
+<div class="flash {{ c }}">{{ m }}</div>{% endfor %}{% endwith %}
 {% if videos %}
-{% for v in videos %}<div>{{ v }}</div>{% endfor %}
+<div class="grid">
+{% for v in videos %}
+<div class="vcard">
+<video src="/media/{{ v.filename }}" controls preload="metadata"></video>
+<div class="vbody">
+<h4>{{ v.title }}</h4>
+{% if v.description %}<p>{{ v.description }}</p>{% endif %}
+{% if v.status == "published" %}<span class="badge ok">Publicado</span>
+{% elif v.status == "processing" %}<span class="badge warn">Processando</span>
+{% else %}<span class="badge err">Erro</span>{% endif %}
+{% if v["demo"] %}<span class="badge warn">demo</span>{% endif %}
+{% if v["items"] %}<div class="items">🛒 {{ v["items"]|length }} produto(s): {{ v["items"]|join(", ") }}</div>{% endif %}
+<div class="meta">{{ v.created_at }}{% if v.shopee_video_id %} · ID {{ v.shopee_video_id }}{% endif %}</div>
+<form method="post" action="/videos/{{ v.id }}/delete" style="margin-top:.6rem" onsubmit="return confirm('Excluir este vídeo?')">
+<button class="del" type="submit">Excluir</button>
+</form>
+</div>
+</div>
+{% endfor %}
+</div>
 {% else %}
 <div class="empty">Nenhum vídeo publicado ainda.<br><br><a href="/upload" style="color:#ee4d2d">Enviar o primeiro vídeo →</a></div>
 {% endif %}

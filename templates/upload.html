@@ -15,11 +15,16 @@ label{display:block;font-size:.9rem;margin:1rem 0 .3rem;color:#333}
 input,textarea{width:100%;padding:.7rem;border:1px solid #ddd;border-radius:8px;font-size:1rem}
 button{margin-top:1.5rem;padding:.8rem 2rem;background:#ee4d2d;color:#fff;border:none;border-radius:8px;font-size:1rem;cursor:pointer}
 .hint{font-size:.8rem;color:#888;margin-top:.3rem}
+.warn-box{background:#fef7e0;border-left:4px solid #b06000;padding:.9rem;border-radius:0 8px 8px 0;margin-bottom:1.2rem;font-size:.9rem}
+.warn-box a{color:#b06000;font-weight:600}
 </style>
 </head>
 <body>
 <header><a href="/dashboard">← Painel</a><span>🎬 Enviar vídeo</span></header>
 <main><div class="card">
+{% if not shopee_connected %}
+<div class="warn-box">⚠️ Conecte sua conta Shopee primeiro: <a href="/connect">Conectar agora</a></div>
+{% endif %}
 <form method="post" enctype="multipart/form-data">
 <label>Arquivo de vídeo (MP4, vertical)</label>
 <input type="file" name="video" accept="video/mp4" required>

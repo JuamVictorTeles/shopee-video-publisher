@@ -113,10 +113,15 @@ class ShopeeVideoClient:
 
 def exchange_code(code):
     """Helper usado pelo callback OAuth do app.py."""
-    import os
+    import os, json
+    cfg = {}
+    cfg_path = os.path.join(os.path.dirname(__file__), "api_config.json")
+    if os.path.exists(cfg_path):
+        with open(cfg_path) as f:
+            cfg = json.load(f)
     client = ShopeeVideoClient(
-        os.environ.get("SHOPEE_PARTNER_ID", ""),
-        os.environ.get("SHOPEE_PARTNER_KEY", ""),
-        os.environ.get("SHOPEE_REGION", "BR"),
+        os.environ.get("SHOPEE_PARTNER_ID") or cfg.get("partner_id", ""),
+        os.environ.get("SHOPEE_PARTNER_KEY") or cfg.get("partner_key", ""),
+        os.environ.get("SHOPEE_REGION") or cfg.get("region", "BR"),
     )
     return client.exchange_code(code)

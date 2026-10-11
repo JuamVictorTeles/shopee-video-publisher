@@ -42,7 +42,6 @@ main{max-width:960px;margin:2rem auto;padding:0 1rem}
 {% if v.status == "published" %}<span class="badge ok">Publicado</span>
 {% elif v.status == "processing" %}<span class="badge warn">Processando</span>
 {% else %}<span class="badge err">Erro</span>{% endif %}
-{% if v["demo"] %}<span class="badge warn">demo</span>{% endif %}
 {% if v["items"] %}<div class="items">🛒 {{ v["items"]|length }} produto(s): {{ v["items"]|join(", ") }}</div>{% endif %}
 <div class="meta">{{ v.created_at }}{% if v.shopee_video_id %} · ID {{ v.shopee_video_id }}{% endif %}</div>
 <form method="post" action="/videos/{{ v.id }}/delete" style="margin-top:.6rem" onsubmit="return confirm('Excluir este vídeo?')">

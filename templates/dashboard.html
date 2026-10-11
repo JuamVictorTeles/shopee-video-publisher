@@ -28,19 +28,16 @@ main{max-width:960px;margin:2rem auto;padding:0 1rem}
 <body>
 <header>
 <span>🎬 Shopee Video Publisher</span>
-<a href="/logout">Sair</a>
+<span><a href="/settings" style="margin-right:1rem">⚙️ API</a><a href="/logout">Sair</a></span>
 </header>
 <main>
 {% with msgs=get_flashed_messages(with_categories=true) %}{% for c,m in msgs %}
 <div class="flash {{ c }}">{{ m }}</div>{% endfor %}{% endwith %}
 
-{% if demo_mode %}
-<div class="demo-note">ℹ️ <strong>Modo demonstração:</strong> as credenciais da Shopee Open Platform serão ativadas após a aprovação do aplicativo. O fluxo de upload, vinculação de produtos e publicação está funcional nesta demonstração.</div>
-{% endif %}
-
 <div class="grid">
 <div class="card"><h3>Status da API Shopee</h3>
-{% if api_configured %}<span class="badge ok">Configurada</span>{% else %}<span class="badge info">Modo demo</span>{% endif %}</div>
+{% if api_configured %}<span class="badge ok">Configurada</span>{% else %}<span class="badge warn">Não configurada</span>{% endif %}
+<div style="margin-top:.6rem"><a href="/settings" style="font-size:.85rem;color:#ee4d2d">Configurar credenciais →</a></div></div>
 <div class="card"><h3>Conta Shopee</h3>
 {% if shopee_connected %}<span class="badge ok">Conectada</span>{% else %}<span class="badge warn">Não conectada</span>{% endif %}</div>
 <div class="card"><h3>Vídeos publicados</h3><div class="big">{{ published }}</div><span style="color:#888;font-size:.85rem">de {{ total_videos }} enviados</span></div>

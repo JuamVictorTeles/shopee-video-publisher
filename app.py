@@ -28,10 +28,33 @@ SHOPEE_REDIRECT_URI = os.environ.get("SHOPEE_REDIRECT_URI", "")
 
 UPLOAD_DIR = os.path.join(os.path.dirname(__file__), "uploads")
 DATA_FILE = os.path.join(os.path.dirname(__file__), "videos.json")
+CONFIG_FILE = os.path.join(os.path.dirname(__file__), "api_config.json")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 ALLOWED_EXT = {"mp4", "mov", "webm"}
 MAX_MB = 200
+
+
+def get_api_config():
+    """Credenciais da API: env vars têm prioridade, depois config salva via UI."""
+    cfg = {}
+    if os.path.exists(CONFIG_FILE):
+        try:
+            with open(CONFIG_FILE) as f:
+                cfg = json.load(f)
+        except (json.JSONDecodeError, OSError):
+            pass
+    return {
+        "partner_id": os.environ.get("SHOPEE_PARTNER_ID") or cfg.get("partner_id", ""),
+        "partner_key": os.environ.get("SHOPEE_PARTNER_KEY") or cfg.get("partner_key", ""),
+        "region": os.environ.get("SHOPEE_REGION") or cfg.get("region", "BR"),
+        "redirect_uri": os.environ.get("SHOPEE_REDIRECT_URI") or cfg.get("redirect_uri", ""),
+    }
+
+
+def save_api_config(cfg):
+    with open(CONFIG_FILE, "w") as f:
+        json.dump(cfg, f, indent=2)
 
 
 def login_required(f):
@@ -56,7 +79,7 @@ def save_videos(videos):
 
 
 def is_demo_mode():
-    return not SHOPEE_PARTNER_ID
+    return not get_api_config()["partner_id"]
 
 
 @app.route("/")
@@ -100,6 +123,7 @@ def dashboard():
 @login_required
 def connect_shopee():
     """OAuth real com a Shopee; em modo demo, simula a conexão."""
+    cfg = get_api_config()
     if is_demo_mode():
         session["shopee_user_id"] = "demo_affiliate_001"
         session["shopee_access_token"] = "demo_token"
@@ -109,8 +133,8 @@ def connect_shopee():
     state = secrets.token_hex(16)
     session["oauth_state"] = state
     auth_base = "https://open.shopee.com.br/auth"
-    url = (f"{auth_base}?partner_id={SHOPEE_PARTNER_ID}&auth_type=user"
-           f"&redirect_uri={quote(SHOPEE_REDIRECT_URI)}"
+    url = (f"{auth_base}?partner_id={cfg['partner_id']}&auth_type=user"
+           f"&redirect_uri={quote(cfg['redirect_uri'])}"
            f"&response_type=code&state={state}")
     return redirect(url)
 
@@ -187,7 +211,8 @@ def upload():
         # Publicação real via API (upload MediaSpace + post_video)
         try:
             from shopee_client import ShopeeVideoClient
-            client = ShopeeVideoClient(SHOPEE_PARTNER_ID, SHOPEE_PARTNER_KEY, SHOPEE_REGION)
+            cfg = get_api_config()
+            client = ShopeeVideoClient(cfg["partner_id"], cfg["partner_key"], cfg["region"])
             # ... fluxo real de upload/publicação ...
             video["status"] = "published"
         except Exception as e:
@@ -233,14 +258,34 @@ def media(filename):
     return send_from_directory(UPLOAD_DIR, secure_filename(filename))
 
 
+@app.route("/settings", methods=["GET", "POST"])
+@login_required
+def settings():
+    """Configuração das credenciais da Shopee Open Platform."""
+    cfg = get_api_config()
+    if request.method == "POST":
+        new_cfg = {
+            "partner_id": request.form.get("partner_id", "").strip(),
+            "partner_key": request.form.get("partner_key", "").strip(),
+            "region": request.form.get("region", "BR").strip(),
+            "redirect_uri": request.form.get("redirect_uri", "").strip(),
+        }
+        save_api_config(new_cfg)
+        flash("Credenciais da API salvas com sucesso.", "success")
+        return redirect(url_for("dashboard"))
+    return render_template("settings.html", cfg=cfg,
+                           from_env=bool(os.environ.get("SHOPEE_PARTNER_ID")))
+
+
 @app.route("/api/status")
 def api_status():
+    cfg = get_api_config()
     return jsonify({
         "app": "Shopee Video Publisher",
-        "version": "1.1.0",
+        "version": "1.2.0",
         "mode": "demo" if is_demo_mode() else "production",
         "shopee_configured": not is_demo_mode(),
-        "region": SHOPEE_REGION,
+        "region": cfg["region"],
         "videos": len(load_videos()),
     })
 

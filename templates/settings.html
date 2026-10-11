@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Configurar API — Shopee Video Publisher</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,Segoe UI,Roboto,sans-serif;background:#f6f6f6}
+header{background:#ee4d2d;color:#fff;padding:1rem 2rem}
+header a{color:#fff;text-decoration:none;margin-right:1rem;font-size:.9rem}
+main{max-width:640px;margin:2rem auto;padding:0 1rem}
+.card{background:#fff;border-radius:12px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+label{display:block;font-size:.9rem;margin:1rem 0 .3rem;color:#333}
+input,select{width:100%;padding:.7rem;border:1px solid #ddd;border-radius:8px;font-size:1rem}
+button{margin-top:1.5rem;padding:.8rem 2rem;background:#ee4d2d;color:#fff;border:none;border-radius:8px;font-size:1rem;cursor:pointer}
+.hint{font-size:.8rem;color:#888;margin-top:.3rem}
+.env-note{background:#fef7e0;border-left:4px solid #b06000;padding:.9rem;border-radius:0 8px 8px 0;margin-bottom:1rem;font-size:.9rem}
+</style>
+</head>
+<body>
+<header><a href="/dashboard">← Painel</a><span>⚙️ Configurar API Shopee</span></header>
+<main><div class="card">
+<h3 style="margin-bottom:.5rem">Credenciais da Shopee Open Platform</h3>
+<p class="hint" style="margin-bottom:1rem">Insira as credenciais do seu aplicativo para ativar a integração real (OAuth, upload e publicação de vídeos). Elas são usadas apenas neste servidor.</p>
+{% if from_env %}
+<div class="env-note">⚠️ As credenciais estão definidas via variáveis de ambiente do servidor — os campos abaixo são ignorados.</div>
+{% endif %}
+<form method="post">
+<label>Partner ID</label>
+<input name="partner_id" value="{{ cfg.partner_id }}" placeholder="Ex: 12345678" {% if from_env %}disabled{% endif %}>
+<label>Partner Key</label>
+<input name="partner_key" type="password" value="{{ cfg.partner_key }}" placeholder="Sua chave secreta" {% if from_env %}disabled{% endif %}>
+<label>Região</label>
+<select name="region" {% if from_env %}disabled{% endif %}>
+<option value="BR" {% if cfg.region == "BR" %}selected{% endif %}>Brasil (BR)</option>
+<option value="GLOBAL" {% if cfg.region == "GLOBAL" %}selected{% endif %}>Global</option>
+</select>
+<label>Redirect URI (OAuth)</label>
+<input name="redirect_uri" value="{{ cfg.redirect_uri }}" placeholder="https://seu-dominio.com/callback" {% if from_env %}disabled{% endif %}>
+<p class="hint">O Redirect URI deve ser o mesmo cadastrado no painel do aplicativo na Shopee Open Platform.</p>
+<button type="submit" {% if from_env %}disabled{% endif %}>Salvar credenciais</button>
+</form>
+</div></main>
+</body>
+</html>

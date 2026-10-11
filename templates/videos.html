@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meus vídeos — Shopee Video Publisher</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,Segoe UI,Roboto,sans-serif;background:#f6f6f6}
+header{background:#ee4d2d;color:#fff;padding:1rem 2rem}
+header a{color:#fff;text-decoration:none;margin-right:1rem;font-size:.9rem}
+main{max-width:960px;margin:2rem auto;padding:0 1rem}
+.empty{background:#fff;border-radius:12px;padding:3rem;text-align:center;color:#888;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+</style>
+</head>
+<body>
+<header><a href="/dashboard">← Painel</a><span>🎬 Meus vídeos</span></header>
+<main>
+{% if videos %}
+{% for v in videos %}<div>{{ v }}</div>{% endfor %}
+{% else %}
+<div class="empty">Nenhum vídeo publicado ainda.<br><br><a href="/upload" style="color:#ee4d2d">Enviar o primeiro vídeo →</a></div>
+{% endif %}
+</main>
+</body>
+</html>

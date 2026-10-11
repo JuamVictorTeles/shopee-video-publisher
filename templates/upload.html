@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enviar vídeo — Shopee Video Publisher</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,Segoe UI,Roboto,sans-serif;background:#f6f6f6}
+header{background:#ee4d2d;color:#fff;padding:1rem 2rem}
+header a{color:#fff;text-decoration:none;margin-right:1rem;font-size:.9rem}
+main{max-width:640px;margin:2rem auto;padding:0 1rem}
+.card{background:#fff;border-radius:12px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+label{display:block;font-size:.9rem;margin:1rem 0 .3rem;color:#333}
+input,textarea{width:100%;padding:.7rem;border:1px solid #ddd;border-radius:8px;font-size:1rem}
+button{margin-top:1.5rem;padding:.8rem 2rem;background:#ee4d2d;color:#fff;border:none;border-radius:8px;font-size:1rem;cursor:pointer}
+.hint{font-size:.8rem;color:#888;margin-top:.3rem}
+</style>
+</head>
+<body>
+<header><a href="/dashboard">← Painel</a><span>🎬 Enviar vídeo</span></header>
+<main><div class="card">
+<form method="post" enctype="multipart/form-data">
+<label>Arquivo de vídeo (MP4, vertical)</label>
+<input type="file" name="video" accept="video/mp4" required>
+<p class="hint">Duração: 3 segundos a 1 minuto. Tamanho recomendado: até 100 MB.</p>
+<label>Título do vídeo</label>
+<input name="title" maxlength="100" required placeholder="Ex: Achadinho que vale cada centavo 🔥">
+<label>Descrição</label>
+<textarea name="description" rows="3" placeholder="Descrição + hashtags"></textarea>
+<label>Produtos vinculados (IDs Shopee, até 6, separados por vírgula)</label>
+<input name="items" placeholder="Ex: 1234567890, 2345678901">
+<p class="hint">Os produtos são vinculados diretamente ao vídeo via API — é assim que a comissão de afiliado é atribuída.</p>
+<button type="submit">Enviar e publicar</button>
+</form>
+</div></main>
+</body>
+</html>

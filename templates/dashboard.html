@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel — Shopee Video Publisher</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,Segoe UI,Roboto,sans-serif;background:#f6f6f6;color:#222}
+header{background:#ee4d2d;color:#fff;padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center}
+header a{color:#fff;text-decoration:none;font-size:.9rem}
+main{max-width:960px;margin:2rem auto;padding:0 1rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-bottom:2rem}
+.card{background:#fff;border-radius:12px;padding:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.card h3{font-size:.95rem;color:#666;margin-bottom:.5rem}
+.card .big{font-size:1.8rem;font-weight:700}
+.badge{display:inline-block;padding:.25rem .7rem;border-radius:20px;font-size:.8rem;margin-top:.5rem}
+.ok{background:#e6f4ea;color:#137333}.warn{background:#fef7e0;color:#b06000}
+.btn{display:inline-block;padding:.7rem 1.4rem;background:#ee4d2d;color:#fff;border-radius:8px;text-decoration:none;margin-top:1rem}
+.btn.sec{background:#fff;color:#ee4d2d;border:1px solid #ee4d2d}
+.flash{padding:.8rem;border-radius:8px;margin-bottom:1rem}
+.flash.success{background:#e6f4ea;color:#137333}.flash.error{background:#fdecea;color:#b3261e}
+.steps{background:#fff;border-radius:12px;padding:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.steps ol{margin-left:1.2rem;line-height:2}
+</style>
+</head>
+<body>
+<header>
+<span>🎬 Shopee Video Publisher</span>
+<a href="/logout">Sair</a>
+</header>
+<main>
+{% with msgs=get_flashed_messages(with_categories=true) %}{% for c,m in msgs %}
+<div class="flash {{ c }}">{{ m }}</div>{% endfor %}{% endwith %}
+<div class="grid">
+<div class="card"><h3>Status da API Shopee</h3>
+{% if api_configured %}<span class="badge ok">Configurada</span>{% else %}<span class="badge warn">Aguardando credenciais</span>{% endif %}</div>
+<div class="card"><h3>Conta Shopee</h3>
+{% if shopee_connected %}<span class="badge ok">Conectada</span>{% else %}<span class="badge warn">Não conectada</span>{% endif %}</div>
+<div class="card"><h3>Vídeos publicados</h3><div class="big">0</div></div>
+</div>
+<div class="steps">
+<h3>Como funciona</h3>
+<ol>
+<li>Conecte sua conta de afiliado Shopee via OAuth</li>
+<li>Envie o vídeo do produto (vertical, 3s–60s)</li>
+<li>Vincule até 6 produtos ao vídeo</li>
+<li>Publique — o sistema usa a Shopee Video API oficial</li>
+</ol>
+{% if not shopee_connected %}
+<a class="btn" href="/connect">Conectar conta Shopee</a>
+{% endif %}
+<a class="btn sec" href="/upload">Enviar vídeo</a>
+<a class="btn sec" href="/videos">Meus vídeos</a>
+</div>
+</main>
+</body>
+</html>
